@@ -1,0 +1,461 @@
+######### Exploring your dataset #########
+________________________________________________________________________________________________________________
+### Diagnose data for cleaning - Video
+# Inconsistent column names
+# Missing Data
+# Outliers
+# Duplicate rows
+# Need to process columns
+# Column types can signal unexpected data values
+
+# Load your data
+import pandas as pd
+
+df = pd.read_csv('literary_birth_rate.csv')
+
+# Visually inspect the beginning and end of your dataframe
+df.head()
+df.tail()
+
+# Visually inspect an index of your column names:
+df.columns
+
+# Visually inspect the number of rows and columns of your dataframe:
+df.shape
+
+# Get additional info about your dataframe (# rows, # columns, # data points per column, data types per column)
+df.info()
+________________________________________________________________________________________________________________
+## Loading and viewing your data - Exercise
+# Import pandas
+import pandas as pd
+
+# Read the file into a DataFrame: df
+df = pd.read_csv('dob_job_application_filings_subset.csv')
+
+# Print the head of df
+print(df.head())
+
+# Print the tail of df
+print(df.tail())
+
+# Print the shape of df
+print(df.shape)
+
+# Print the columns of df
+print(df.columns)
+
+# Print the head and tail of df_subset
+print(df_subset.head())
+print(df_subset.tail())
+________________________________________________________________________________________________________________
+## Further diagnosis - Exercise
+# Print the info of df
+print(df.info())
+
+# Print the info of df_subset
+print(df_subset.info())
+
+________________________________________________________________________________________________________________
+## Exploratory data analysis - video 
+# Get the data type of each column
+df.info()
+
+# Frequency counts: continent
+df.continent.value_counts(dropna=False)    # dropna=False means that it will also count the number of missing values if any
+# Or you can also use bracket notation:
+df['continent'].value_counts(dropna=False)
+
+# Frequency counts: country - using the head method to only show a subset - as there are too many countries to view
+df.country.value_counts(dropna=False).head()
+
+# Frequency counts: fertility
+df.fertility.value_counts(dropna=False).head()
+
+# Frequncy counts: population
+df.population.value_counts(dropna=False).head()
+
+# Summary statistics: Numeric data - returns count/mean/std/min/25th-50th-75th percentiles/max
+df.describe()
+________________________________________________________________________________________________________________
+## Calculating summary statistics - MC-Question
+# You'll now use the .describe() method to calculate summary statistics of your data.
+
+# In this exercise, the columns 'Initial Cost' and 'Total Est. Fee' have been cleaned up for you. 
+# That is, the dollar sign has been removed and they have been converted into two new numeric columns: 
+# initial_cost and total_est_fee. You'll learn how to do this yourself in later chapters. 
+# It's also worth noting that some columns such as Job # are encoded as numeric columns, 
+# but it does not make sense to compute summary statistics for such columns.
+
+# This cleaned DataFrame has been pre-loaded as df. Your job is to use the .describe() method on it in 
+# the IPython Shell and select the statement below that is False.
+
+df.describe()
+
+# The mean of 'Proposed No. of Stories' is 8.144325. = TRUE
+# The standard deviation of 'Existing Height' is 146.917360. TRUE
+# There are 12846 entries in the DataFrame. TRUE
+# The standard deviation of 'Street Frontage' is 11.874080. FALSE
+# The maximum of 'Proposed Height' is 4200. TRUE
+________________________________________________________________________________________________________________
+## Frequency counts for categorical data - Exercise
+# Print the value counts for 'Borough'
+print(df['Borough'].value_counts(dropna=False))
+
+# Print the value_counts for 'State'
+print(df['State'].value_counts(dropna=False))
+
+# Print the value counts for 'Site Fill'
+print(df['Site Fill'].value_counts(dropna=False))
+
+________________________________________________________________________________________________________________
+## Visual exploratory data analysis - Video
+# Data Visualization
+# Great way to spot outliers and obvious errors
+# More than just looking for patterns
+# Plan data cleaning steps
+df.describe()           # Summary Statistics
+
+# Bar plots and histograms
+# Bar plots for discrete data counts
+# Histograms for continuous data counts
+# Histogram example:
+df.population.plot('hist')
+
+import matplotlib.pyplot as plt
+
+plt.show()
+
+# Identifying the error
+df[df.population > 1000000000]      # look for all data points where the population is greater than 1 billion people
+
+# Not all outliers are bad data points
+# Some may be an error, but others can be valid values
+
+# Box plots
+# Visualize basic summary statistics (outliers, min/max, as well as 25th/50th/75th percentiles)
+df.boxplot(column='population', by='continent')
+
+plt.show()
+
+# Scatter plots
+# Used to look at relationships between 2 numeric variables (or columns)
+# You can use them to flag potentially bad data points
+________________________________________________________________________________________________________________
+## Visualizing single variables with histograms - Exercise
+# Import matplotlib.pyplot
+import matplotlib.pyplot as plt
+
+# Describe the column
+df['Existing Zoning Sqft'].describe()
+
+# Plot the histogram
+df['Existing Zoning Sqft'].plot(kind='hist', rot=70, logx=True, logy=True)
+
+# Display the histogram
+plt.show()
+________________________________________________________________________________________________________________
+## Visualizing multiple variables with boxplots - Exercise
+# Import necessary modules
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Create the boxplot
+df.boxplot(column='initial_cost', by='Borough', rot=90)
+
+# Display the plot
+plt.show()
+________________________________________________________________________________________________________________
+## Visualizing multiple variables with scatter plots - Exercise
+# Import necessary modules
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Create and display the first scatter plot
+df.plot(kind='scatter', x='initial_cost', y='total_est_fee', rot=70)
+plt.show()
+
+# Create and display the second scatter plot
+df_subset.plot(kind='scatter', x='initial_cost', y='total_est_fee', rot=70)
+plt.show()
+________________________________________________________________________________________________________________
+######### Tidying data for analysis #########
+________________________________________________________________________________________________________________
+## Tidy data - Video
+# "Tidy Data" paper by Hadley Wickham, PhD
+# Formalize the way we describe the shape of data
+# Gives us a goal when formatting data
+# "Standard way to organize data values within a data set"
+# Principles of tidy data
+  # Columns represent separate variables
+  # Rows represent individual observations
+  # Observational units form tables
+# Some formats are better for reporting, some are better for analysis
+# In order to fix a situation where comlumns contain calues instead of variables you can use pd.melt()
+# Melting
+pd.melt(frame=df, id_vars='name',                   # frame is the dataframe you want to use, id_vars is the column you want to remain static
+        value_vars=['treatment a', 'treatment b'])  # value_vars are the columns that you want to 'melt' 
+# frame = the dataframe you want to use
+# id_vars = the column that you wish to remain static
+# value_vars = the columns you want to melt
+# the default for value_vars is every-column-except-the-id_vars-column
+________________________________________________________________________________________________________________
+## Recognizing tidy data - MC Question
+# For data to be tidy, it must have:
+
+# Each variable as a separate column.
+# Each row as a separate observation.
+# As a data scientist, you'll encounter data that is represented in a variety of different ways, so it is important to be able
+# to recognize tidy (or untidy) data when you see it.
+
+# In this exercise, two example datasets have been pre-loaded into the DataFrames df1 and df2. Only one of them is tidy.
+# Your job is to explore these further in the IPython Shell and identify the one that is not tidy, and why it is not tidy.
+
+# In the rest of this course, you will frequently be asked to explore the structure of DataFrames in the IPython Shell prior
+# to performing different operations on them. Doing this will not only strengthen your comprehension of the data cleaning
+# concepts covered in this course, but will also help you realize and take advantage of the relationship between working in
+# the Shell and in the script.
+
+df1.head()
+df2.head()
+
+# df2; the rows are not all separate observations. FALSE
+# df1; each variable is not a separate column. FALSE
+# df2; each variable is not a separate column. TRUE
+# df1; the rows are not all separate observations. FALSE
+________________________________________________________________________________________________________________
+## Reshaping your data using melt - Exercise
+# Print the head of airquality
+print(airquality.head())
+
+# Melt airquality: airquality_melt
+airquality_melt = pd.melt(frame=airquality, id_vars=['Month', 'Day'])
+
+# Print the head of airquality_melt
+print(airquality_melt.head())
+________________________________________________________________________________________________________________
+## Customizing melted data - Exercise
+# Print the head of airquality
+print(airquality.head())
+
+# Melt airquality: airquality_melt
+airquality_melt = pd.melt(airquality, id_vars=['Month', 'Day'], var_name='measurement', value_name='reading')
+
+# Print the head of airquality_melt
+print(airquality_melt.head())
+________________________________________________________________________________________________________________
+## Pivoting data - Video
+# Pivol: un-melting data
+# In melting, we turned columns into rows; in pivoting, we turn unique values into separate columns
+# We would do this if we want to reshape data from an analysis-friendly shape to a reporting-friendly shape
+# Or if one of our row contains observations or if multiple variables are stored in the same column (violates tidy data principles)
+import numpy as np
+weather_tidy = weather.pivot(index='date', columns='element', values='value')
+print(weather_tidy)
+# index= the columns we want to fix during the pivot (as in - remain fixed)
+# columns= the column we want to pivot into new columns
+# values= the values that we want to be used to fill in the new columns created by the pivot
+
+# Pivot Table
+# has a parameter that specifies how to deal with duplicate values
+# Example: can aggregate the duplicate values by taking their average
+weather2_tidy = weather.pivot_table(values='value',
+                                    index='date',
+                                    columns='element',
+                                    aggfunc=np.mean)
+# when there are multiple values use aggfunc to assign the use of np.mean to address these values
+________________________________________________________________________________________________________________
+## Pivot data - Exercise
+# Print the head of airquality_melt
+print(airquality_melt.head())
+
+# Pivot airquality_melt: airquality_pivot
+airquality_pivot = airquality_melt.pivot_table(index=['Month', 'Day'], columns='measurement', values='reading')
+
+# Print the head of airquality_pivot
+print(airquality_pivot.head())
+________________________________________________________________________________________________________________
+## Resetting the index of a DataFrame - Exercise
+# Print the index of airquality_pivot
+print(airquality_pivot.index)
+
+# Reset the index of airquality_pivot: airquality_pivot_reset
+airquality_pivot_reset = airquality_pivot.reset_index()
+
+# Print the new index of airquality_pivot_reset
+print(airquality_pivot_reset.index)
+
+# Print the head of airquality_pivot_reset
+print(airquality_pivot_reset.head())
+________________________________________________________________________________________________________________
+## Pivoting duplicate values - Exercise
+# Pivot table the airquality_dup: airquality_pivot
+airquality_pivot = airquality_dup.pivot_table(index=['Month', 'Day'], columns='measurement', values='reading', aggfunc=np.mean)
+
+# Print the head of airquality_pivot before reset_index
+print(airquality_pivot.head())
+
+# Reset the index of airquality_pivot
+airquality_pivot = airquality_pivot.reset_index()
+
+# Print the head of airquality_pivot
+print(airquality_pivot.head())
+
+# Print the head of airquality
+print(airquality.head())
+________________________________________________________________________________________________________________
+## Beyond melt and pivot - Video
+# Melting and pivoting are basic tooks, but another common problem is columns that contain multiple bits of information
+# Melting and parsing
+pd.melt(frame=tb, id_vars=['country','year'])
+# frame = the relevant dataframe
+# id_vars = the columns you want to remain fixed as a python list - all other columns will be melted
+tb_melt['sex'] = tb.melt.variable.str[0]        # variable = the column we want to pull the new variable to pull out
+tb_melt
+________________________________________________________________________________________________________________
+## Splitting a column with .str - Exercise
+# Melt tb: tb_melt
+tb_melt = pd.melt(frame=tb, id_vars=['country', 'year'])
+
+# Create the 'gender' column
+tb_melt['gender'] = tb_melt.variable.str[0]
+
+# Create the 'age_group' column
+tb_melt['age_group'] = tb_melt.variable.str[1:]
+
+# Print the head of tb_melt
+print(tb_melt.head())
+________________________________________________________________________________________________________________
+## Splitting a column with .split() and .get() - Exercise
+# Melt ebola: ebola_melt
+ebola_melt = pd.melt(ebola, id_vars=['Date', 'Day'], var_name='type_country', value_name='counts')
+
+# Create the 'str_split' column
+ebola_melt['str_split'] = ebola_melt.type_country.str.split('_')
+
+# Create the 'type' column
+ebola_melt['type'] = ebola_melt.str_split.str.get(0)
+
+# Create the 'country' column
+ebola_melt['country'] = ebola_melt.str_split.str.get(1)
+
+# Print the head of ebola_melt
+print(ebola_melt.head())
+________________________________________________________________________________________________________________
+######### Combining data for analysis #########
+________________________________________________________________________________________________________________
+## Concatenating data - Video
+#
+________________________________________________________________________________________________________________
+## Combining rows of data - Exercise
+#
+________________________________________________________________________________________________________________
+## Combining columns of data - Exercise
+#
+________________________________________________________________________________________________________________
+## Finding and concatenating data - Exercise
+#
+________________________________________________________________________________________________________________
+## Finding files that match a pattern - Exercise
+#
+________________________________________________________________________________________________________________
+## Iterating and concatenating all matches - Exercise
+#
+________________________________________________________________________________________________________________
+## Merge data - Video
+#
+________________________________________________________________________________________________________________
+## 1-to-1 data merge - Exercise
+#
+________________________________________________________________________________________________________________
+## Many-to-1 data merge - Exercise
+#
+________________________________________________________________________________________________________________
+## Many-to-many data merge - Exercise
+#
+________________________________________________________________________________________________________________
+######### Cleaning data for analysis #########
+________________________________________________________________________________________________________________
+## Data types - Video
+#
+________________________________________________________________________________________________________________
+## Converting data types - Exercise
+#
+________________________________________________________________________________________________________________
+## Working with numeric data - Exercise
+#
+________________________________________________________________________________________________________________
+## Using regular expressions to clean strings - Video
+#
+________________________________________________________________________________________________________________
+## String parsing with regular expressions - Exercise
+#
+________________________________________________________________________________________________________________
+## Extracting numerical values from strings - Exercise
+#
+________________________________________________________________________________________________________________
+## Pattern matching - Exercise
+#
+________________________________________________________________________________________________________________
+## Using functions to clean data - Video
+#
+________________________________________________________________________________________________________________
+## Custom functions to clean data - Exercise
+#
+________________________________________________________________________________________________________________
+## Lambda functions - Exercise
+#
+________________________________________________________________________________________________________________
+## Duplicate and missing data - Video
+#
+________________________________________________________________________________________________________________
+## Dropping duplicate data - Exercise
+#
+________________________________________________________________________________________________________________
+## Filling missing data - Exercise
+#
+________________________________________________________________________________________________________________
+## Testing with asserts - Video
+#
+________________________________________________________________________________________________________________
+## Testing your data with asserts - Exercise
+#
+________________________________________________________________________________________________________________
+######### Case Study #########
+________________________________________________________________________________________________________________
+## Putting it all together - Video
+#
+________________________________________________________________________________________________________________
+## Exploratory analysis - MC Question
+#
+________________________________________________________________________________________________________________
+## Visualizing your data - Exercise
+#
+________________________________________________________________________________________________________________
+## Thinking about the question at hand - Exercise
+#
+________________________________________________________________________________________________________________
+## Assembling your data - Exercise
+#
+________________________________________________________________________________________________________________
+## Initial impressions of the data - Video
+#
+________________________________________________________________________________________________________________
+## Reshaping your data - Exercise
+#
+________________________________________________________________________________________________________________
+## Checking the data types - Exercise
+#
+________________________________________________________________________________________________________________
+## Looking at country spellings - Exercise
+#
+________________________________________________________________________________________________________________
+## More data cleaning and processing - Exercise
+#
+________________________________________________________________________________________________________________
+## Wrapping up - Exercise
+#
+________________________________________________________________________________________________________________
+## Final Thoughts - Video
+#
+________________________________________________________________________________________________________________
