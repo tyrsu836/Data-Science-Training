@@ -345,34 +345,138 @@ ________________________________________________________________________________
 ######### Combining data for analysis #########
 ________________________________________________________________________________________________________________
 ## Concatenating data - Video
-#
+# Data may not always come in 1 huge file
+# 5 million row dataset may be broken into 5 separate datasets
+# Smaller sets are easier to store and share
+# May have a new data set for each day/session etc.
+# It is immportant to be able to combine and clean, or vice versa
+
+concatenated = pd.concat([weather_p1, weather_p2])
+print(concatenated)
+# the dataframe keeps the row index from the original datasets so there are more than one row 0 
+
+concatenated = concatenated.loc[0,:] # this will call the first row of every dataset you concatenated
+
+# To avoid this you can choose to ignore the original row indices using:
+pd.concat([weather_p1, weather_p2], ignore_index=True)
 ________________________________________________________________________________________________________________
 ## Combining rows of data - Exercise
-#
+# Concatenate uber1, uber2, and uber3: row_concat
+row_concat = pd.concat([uber1, uber2, uber3])
+
+# Print the shape of row_concat
+print(row_concat.shape)
+
+# Print the head of row_concat
+print(row_concat.head())
 ________________________________________________________________________________________________________________
 ## Combining columns of data - Exercise
-#
+# Concatenate ebola_melt and status_country column-wise: ebola_tidy
+ebola_tidy = pd.concat([ebola_melt, status_country], axis=1)
+
+# Print the shape of ebola_tidy
+print(ebola_tidy.shape)
+
+# Print the head of ebola_tidy
+print(ebola_tidy.head())
 ________________________________________________________________________________________________________________
-## Finding and concatenating data - Exercise
-#
+## Finding and concatenating data - Video
+# Concatenating many files
+# Leverage Python's features with data cleaning in pandas
+# In order to concatenate DataFrames they must be in a list 
+# You can load datasets individually if there are only a few, but if there are thousands you want to use the 
+# glob function to find files based on a pattern and import them using a for loop
+# To import any .csv file you would use *.csv
+# file_?.csv will glob together any file called file_?.csv where the ? is a single letter or number
+import glob
+csv_files = glob.glob('*.csv')
+print(csv_files)
+
+list_data = []
+for filename in csv_files:
+          data = pd.read_csv(filename)
+          list_data.append(data)
+pd.concat(list_data)
 ________________________________________________________________________________________________________________
 ## Finding files that match a pattern - Exercise
-#
+# Import necessary modules
+import glob
+import pandas as pd
+
+# Write the pattern: pattern
+pattern = '*.csv'
+
+# Save all file matches: csv_files
+csv_files = glob.glob(pattern)
+
+# Print the file names
+print(csv_files)
+
+# Load the second file into a DataFrame: csv2
+csv2 = pd.read_csv(csv_files[1])
+
+# Print the head of csv2
+print(csv2.head())
 ________________________________________________________________________________________________________________
 ## Iterating and concatenating all matches - Exercise
-#
+# Create an empty list: frames
+frames = []
+
+#  Iterate over csv_files
+for csv in csv_files:
+
+    #  Read csv into a DataFrame: df
+    df = pd.read_csv(csv)
+    
+    # Append df to frames
+    frames.append(df)
+
+# Concatenate frames into a single DataFrame: uber
+uber = pd.concat(frames)
+
+# Print the shape of uber
+print(uber.shape)
+
+# Print the head of uber
+print(uber.head())
 ________________________________________________________________________________________________________________
 ## Merge data - Video
-#
+# Concatenation is not the only way data can be combined
+# Merging is similar to joining tables in SQL 
+# You combone disparate datasets based on common columns
+pd.merge(left=state_populations, right=state_codes, 
+         on=None, left_on'state', right_on='name'
+# Here 'left' and 'right' are the two dataframes we want to merge
+# If the comlumns you want to use as keys are spelled the same you can use the 'on' parameter and specify the key
+# If the column names are different - as in this case - we have to specify the left and right parameter keys 
+
+# There are three different types of merges: one-to-one; many-to-one/one-to-many; and many-to-many they use the same function
+
 ________________________________________________________________________________________________________________
 ## 1-to-1 data merge - Exercise
-#
+# Merge the DataFrames: o2o
+o2o = pd.merge(left=site, right=visited, left_on='name', right_on='site')
+
+# Print o2o
+print(o2o)
 ________________________________________________________________________________________________________________
 ## Many-to-1 data merge - Exercise
-#
+# Merge the DataFrames: m2o
+m2o = pd.merge(left=site, right=visited,
+                left_on='name', right_on='site')
+
+# Print m2o
+print(m2o)
 ________________________________________________________________________________________________________________
 ## Many-to-many data merge - Exercise
-#
+# Merge site and visited: m2m
+m2m = pd.merge(left=site, right=visited, left_on='name', right_on='site')
+
+# Merge m2m and survey: m2m
+m2m = pd.merge(left=m2m, right=survey, left_on='ident', right_on='taken')
+
+# Print the first 20 lines of m2m
+print(m2m.head(20))
 ________________________________________________________________________________________________________________
 ######### Cleaning data for analysis #########
 ________________________________________________________________________________________________________________
